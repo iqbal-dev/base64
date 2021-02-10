@@ -1,23 +1,41 @@
 import logo from './logo.svg';
 import './App.css';
+import Tickets from './Tickets';
+import { useState } from 'react';
 
 function App() {
+  const[baseImage,setBaseImage] = useState("")
+  const imageUpload = async (e) => {
+    console.log(e.target.files[0]);
+    const file = e.target.files[0];
+
+    const base64 = await convertBase64(file);
+    setBaseImage(base64)
+    console.log(base64);
+  }
+
+  const convertBase64 = file => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      } 
+    })
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input onChange={(e) => {
+        imageUpload(e)
+      }} type="file" name="image" id="image" />
+      <br />
+      <img src={baseImage} height="150" width="150px"alt=""/>
     </div>
   );
 }
